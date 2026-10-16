@@ -140,13 +140,17 @@ def run_benchmark(
                 mem.ingest_session(sample_id, session)
 
         # Evaluate QA items
-        for qa in conv.qa_items:
+        total_qa = len(conv.qa_items)
+        print(f"\n[Conversation: {sample_id}] Evaluating {total_qa} QA items...", flush=True)
+        for q_idx, qa in enumerate(conv.qa_items, 1):
             if runner.is_item_completed(qa.qa_id):
                 continue
 
+            print(f"  -> QA item {q_idx}/{total_qa} (ID: {qa.qa_id}): {qa.question[:60]}...", flush=True)
             t0 = time.time()
             resp = mem.respond(sample_id, qa.question)
             latency = time.time() - t0
+            print(f"     Answer: {resp.text[:60]}... (latency: {latency:.2f}s)", flush=True)
 
             # Compute NLP metrics
             f1 = compute_f1(resp.text, qa.answer)

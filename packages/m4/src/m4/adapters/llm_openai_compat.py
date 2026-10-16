@@ -33,7 +33,10 @@ class OpenAICompatLLMClient:
         temperature: Optional[float] = None,
         json_mode: bool = False,
         max_tokens: Optional[int] = None,
+        max_retries: int = 3,
     ) -> str:
+        import time
+
         url = f"{self.base_url}/chat/completions"
         headers = {"Authorization": f"Bearer {self.api_key}"}
 
@@ -47,10 +50,20 @@ class OpenAICompatLLMClient:
         if json_mode:
             payload["response_format"] = {"type": "json_object"}
 
-        resp = self._client.post(url, json=payload, headers=headers)
-        resp.raise_for_status()
-        data = resp.json()
-        return data["choices"][0]["message"]["content"]
+        last_exc = None
+        for attempt in range(max_retries):
+            try:
+                resp = self._client.post(url, json=payload, headers=headers)
+                resp.raise_for_status()
+                data = resp.json()
+                return data["choices"][0]["message"]["content"]
+            except (httpx.HTTPStatusError, httpx.RequestError) as exc:
+                last_exc = exc
+                if attempt < max_retries - 1:
+                    time.sleep(2 * (attempt + 1))
+                else:
+                    raise last_exc
+        raise last_exc
 
 
 OpenAICompatLLM = OpenAICompatLLMClient

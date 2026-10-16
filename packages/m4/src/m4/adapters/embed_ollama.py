@@ -34,8 +34,20 @@ class OllamaEmbedder:
             "keep_alive": "24h",
         }
 
-        resp = self._client.post(url, json=payload)
-        resp.raise_for_status()
-        data = resp.json()
-        embeddings = data.get("embeddings", [])
-        return embeddings
+        import time
+
+        last_exc = None
+        for attempt in range(3):
+            try:
+                resp = self._client.post(url, json=payload)
+                resp.raise_for_status()
+                data = resp.json()
+                embeddings = data.get("embeddings", [])
+                return embeddings
+            except (httpx.HTTPStatusError, httpx.RequestError) as exc:
+                last_exc = exc
+                if attempt < 2:
+                    time.sleep(2 * (attempt + 1))
+                else:
+                    raise last_exc
+        raise last_exc
