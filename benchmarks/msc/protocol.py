@@ -146,7 +146,10 @@ def run_benchmark(
         mem.reset(ns)
 
         # 1. Ingest past sessions (Sessions 1..k-1)
-        for session in ep.ingestion_sessions:
+        total_sess = len(ep.ingestion_sessions)
+        print(f"\n[Episode: {item_id}] Ingesting {total_sess} past sessions...", flush=True)
+        for s_idx, session in enumerate(ep.ingestion_sessions, 1):
+            print(f"  -> Ingesting session {s_idx}/{total_sess}...", flush=True)
             mem.ingest_session(ns, session)
 
         # 2. Maintain memory if compression is enabled and sessions exist

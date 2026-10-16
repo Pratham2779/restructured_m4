@@ -102,6 +102,7 @@ class BenchmarkRunner:
             start_time=datetime.now(timezone.utc).isoformat(),
             known_deviations=KNOWN_DEVIATIONS,
         )
+        self.total_target_items = len(sampled_ids)
         with open(self.manifest_file, "w", encoding="utf-8") as f:
             f.write(manifest.model_dump_json(indent=2))
         return manifest
@@ -118,6 +119,8 @@ class BenchmarkRunner:
             os.fsync(f.fileno())
 
         self.completed_item_ids.add(item.item_id)
+        total_str = f"/{self.total_target_items}" if hasattr(self, "total_target_items") else ""
+        print(f"[{len(self.completed_item_ids)}{total_str}] Completed item {item.item_id} (latency: {item.latency_seconds:.2f}s, F1: {item.metrics.get('f1', 0):.1f}%)", flush=True)
 
         if trace_detail:
             trace_path = os.path.join(self.run_dir, "traces", f"{item.item_id}.json")

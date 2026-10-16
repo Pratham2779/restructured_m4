@@ -122,7 +122,10 @@ def run_benchmark(
         # Ingest sessions chronologically into conversation namespace if needed
         if qa_pending:
             mem.reset(sample_id)
-            for session in conv.sessions:
+            total_sess = len(conv.sessions)
+            print(f"\n[Conversation: {sample_id}] Ingesting {total_sess} sessions...", flush=True)
+            for s_idx, session in enumerate(conv.sessions, 1):
+                print(f"  -> Ingesting session {s_idx}/{total_sess} (ID: {session.id})...", flush=True)
                 mem.ingest_session(sample_id, session)
 
         # Evaluate QA items
