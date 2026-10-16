@@ -197,7 +197,8 @@ def report_command(run_dir: str, expected_file: Optional[str]):
 @click.option("--stage", type=click.Choice(["smoke", "pilot"]), default="pilot", help="Stage for sweep (default 'pilot').")
 @click.option("--gammas", type=str, default="0.3,0.4,0.5,0.6,0.7,0.8", help="Comma-separated gamma values.")
 @click.option("--results-dir", type=str, default="results/sweeps", help="Output directory for sweep runs.")
-def sweep_gamma_command(dataset: str, stage: str, gammas: str, results_dir: str):
+@click.option("--mock", is_flag=True, default=False, help="Run with deterministic fake models (offline hermetic execution).")
+def sweep_gamma_command(dataset: str, stage: str, gammas: str, results_dir: str, mock: bool):
     """Reproduce Figure 9: Evaluate sensitivity over gamma thresholds."""
     gamma_list = [float(g.strip()) for g in gammas.split(",") if g.strip()]
     console.print(f"[bold cyan]Starting Gamma Sweep on '{dataset}' across:[/bold cyan] {gamma_list}")
@@ -221,6 +222,7 @@ def sweep_gamma_command(dataset: str, stage: str, gammas: str, results_dir: str)
             stage=stage,
             gamma=g,
             results_dir=run_res_dir,
+            mock=mock,
         )
         sweep_results[g] = agg.overall_metrics
 

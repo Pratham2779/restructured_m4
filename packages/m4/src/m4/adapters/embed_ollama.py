@@ -22,7 +22,11 @@ class OllamaEmbedder:
         if not texts:
             return []
 
-        url = f"{self.base_url}/api/embed"
+        base = self.base_url.rstrip("/")
+        for suffix in ("/api/embed", "/api/embeddings", "/v1"):
+            if base.endswith(suffix):
+                base = base[:-len(suffix)]
+        url = f"{base}/api/embed"
         payload = {
             "model": self.model,
             "input": texts,

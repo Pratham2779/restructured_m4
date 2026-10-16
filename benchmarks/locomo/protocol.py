@@ -100,7 +100,7 @@ def run_benchmark(
             temperature=temperature,
         )
         emb = embedder_client or OllamaEmbedder(
-            base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434/api/embeddings"),
+            base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434"),
             model=embedder,
         )
         mem_store = store or InMemoryStore()
