@@ -67,6 +67,8 @@ class BenchmarkRunner:
         self.aggregate_file = os.path.join(self.run_dir, "aggregate.json")
 
         self.observer = BenchmarkObserver()
+        import threading
+        self._lock = threading.Lock()
         self.completed_item_ids: Set[str] = self._load_existing_completed_ids()
 
     def _load_existing_completed_ids(self) -> Set[str]:
@@ -113,23 +115,25 @@ class BenchmarkRunner:
         - Append to items.jsonl and flush immediately (atomic checkpointing).
         - Save full trace to traces/{item_id}.json.
         """
-        with open(self.items_file, "a", encoding="utf-8") as f:
-            f.write(item.model_dump_json() + "\n")
-            f.flush()
-            os.fsync(f.fileno())
+        with self._lock:
+            with open(self.items_file, "a", encoding="utf-8") as f:
+                f.write(item.model_dump_json() + "\n")
+                f.flush()
+                os.fsync(f.fileno())
 
-        self.completed_item_ids.add(item.item_id)
-        total_str = f"/{self.total_target_items}" if hasattr(self, "total_target_items") else ""
-        print(f"[{len(self.completed_item_ids)}{total_str}] Completed item {item.item_id} (latency: {item.latency_seconds:.2f}s, F1: {item.metrics.get('f1', 0):.1f}%)", flush=True)
+            self.completed_item_ids.add(item.item_id)
+            total_str = f"/{self.total_target_items}" if hasattr(self, "total_target_items") else ""
+            print(f"[{len(self.completed_item_ids)}{total_str}] Completed item {item.item_id} (latency: {item.latency_seconds:.2f}s, F1: {item.metrics.get('f1', 0):.1f}%)", flush=True)
 
-        if trace_detail:
-            trace_path = os.path.join(self.run_dir, "traces", f"{item.item_id}.json")
-            with open(trace_path, "w", encoding="utf-8") as tf:
-                json.dump(trace_detail, tf, indent=2)
+            if trace_detail:
+                trace_path = os.path.join(self.run_dir, "traces", f"{item.item_id}.json")
+                with open(trace_path, "w", encoding="utf-8") as tf:
+                    json.dump(trace_detail, tf, indent=2)
 
     def is_item_completed(self, item_id: str) -> bool:
         """Check if item was already processed in a previous attempt (resumption)."""
-        return item_id in self.completed_item_ids
+        with self._lock:
+            return item_id in self.completed_item_ids
 
     def finalize(self) -> AggregateResult:
         """

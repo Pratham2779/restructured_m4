@@ -139,7 +139,7 @@ class CategoryLearningPipeline:
             groups.setdefault(root, []).append(i)
 
         # Produce one consolidated clue per category
-        results: List[Tuple[str, str, List[float], List[float]]] = []
+        group_items = []
         for root_idx, member_indices in groups.items():
             canonical_cat = candidates[root_idx][0]
             cat_emb = cat_embeddings[root_idx]
@@ -150,8 +150,13 @@ class CategoryLearningPipeline:
                 # Combine summaries of the same category into one coherent clue
                 combined_points = " ".join(candidates[idx][1] for idx in member_indices)
                 clue_text = combined_points
+            group_items.append((canonical_cat, clue_text, cat_emb))
 
-            clue_emb = self.embedder.embed([clue_text])[0]
+        clue_texts = [item[1] for item in group_items]
+        clue_embeddings = self.embedder.embed(clue_texts)
+
+        results: List[Tuple[str, str, List[float], List[float]]] = []
+        for (canonical_cat, clue_text, cat_emb), clue_emb in zip(group_items, clue_embeddings):
             results.append((canonical_cat, clue_text, cat_emb, clue_emb))
 
         return results

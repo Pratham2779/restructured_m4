@@ -141,43 +141,52 @@ def run_benchmark(
 
         # Evaluate QA items
         total_qa = len(conv.qa_items)
-        print(f"\n[Conversation: {sample_id}] Evaluating {total_qa} QA items...", flush=True)
-        for q_idx, qa in enumerate(conv.qa_items, 1):
-            if runner.is_item_completed(qa.qa_id):
-                continue
+        pending_qa = [qa for qa in conv.qa_items if not runner.is_item_completed(qa.qa_id)]
+        if pending_qa:
+            print(f"\n[Conversation: {sample_id}] Evaluating {len(pending_qa)}/{total_qa} QA items (workers={workers})...", flush=True)
 
-            print(f"  -> QA item {q_idx}/{total_qa} (ID: {qa.qa_id}): {qa.question[:60]}...", flush=True)
-            t0 = time.time()
-            resp = mem.respond(sample_id, qa.question)
-            latency = time.time() - t0
-            print(f"     Answer: {resp.text[:60]}... (latency: {latency:.2f}s)", flush=True)
+            def eval_single_qa(qa: LoCoMoQA) -> None:
+                if runner.is_item_completed(qa.qa_id):
+                    return
 
-            # Compute NLP metrics
-            f1 = compute_f1(resp.text, qa.answer)
-            acc = compute_accuracy(resp.text, qa.answer)
-            b1, b4 = compute_bleu(resp.text, qa.answer)
-            r_l = compute_rouge_l(resp.text, qa.answer)
+                t0 = time.time()
+                resp = mem.respond(sample_id, qa.question)
+                latency = time.time() - t0
 
-            metrics = {
-                "f1": f1,
-                "accuracy": acc,
-                "bleu_1": b1,
-                "bleu_4": b4,
-                "rouge_l": r_l,
-            }
+                # Compute NLP metrics
+                f1 = compute_f1(resp.text, qa.answer)
+                acc = compute_accuracy(resp.text, qa.answer)
+                b1, b4 = compute_bleu(resp.text, qa.answer)
+                r_l = compute_rouge_l(resp.text, qa.answer)
 
-            item_res = ItemResult(
-                item_id=qa.qa_id,
-                conversation_id=sample_id,
-                category=qa.category_name,
-                inputs={"question": qa.question, "category": qa.category},
-                prediction=resp.text,
-                gold=qa.answer,
-                metrics=metrics,
-                trace_summary={"node_count": len(resp.retrieval.nodes)},
-                tokens_used=runner.observer.total_prompt_tokens + runner.observer.total_completion_tokens,
-                latency_seconds=round(latency, 3),
-            )
-            runner.record_item(item_res, trace_detail=resp.retrieval.trace)
+                metrics = {
+                    "f1": f1,
+                    "accuracy": acc,
+                    "bleu_1": b1,
+                    "bleu_4": b4,
+                    "rouge_l": r_l,
+                }
+
+                item_res = ItemResult(
+                    item_id=qa.qa_id,
+                    conversation_id=sample_id,
+                    category=qa.category_name,
+                    inputs={"question": qa.question, "category": qa.category},
+                    prediction=resp.text,
+                    gold=qa.answer,
+                    metrics=metrics,
+                    trace_summary={"node_count": len(resp.retrieval.nodes)},
+                    tokens_used=runner.observer.total_prompt_tokens + runner.observer.total_completion_tokens,
+                    latency_seconds=round(latency, 3),
+                )
+                runner.record_item(item_res, trace_detail=resp.retrieval.trace)
+
+            if workers > 1:
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+                    list(executor.map(eval_single_qa, pending_qa))
+            else:
+                for qa in pending_qa:
+                    eval_single_qa(qa)
 
     return runner.finalize()
