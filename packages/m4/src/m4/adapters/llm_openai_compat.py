@@ -14,14 +14,15 @@ class OpenAICompatLLMClient:
         base_url: str = "http://localhost:11434/v1",
         model: str = "qwen2.5:7b-instruct",
         api_key: str = "dummy",
-        timeout: float = 120.0,
+        timeout: Optional[float] = None,
         temperature: float = 0.8,
         **kwargs,
     ):
+        import os
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.api_key = api_key
-        self.timeout = timeout
+        self.timeout = float(os.environ.get("M4_LLM_TIMEOUT", 300.0)) if timeout is None else timeout
         self.temperature = temperature
 
     def chat(

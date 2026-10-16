@@ -28,7 +28,15 @@ echo "--> Starting Ollama server..."
 bash "$(dirname "$0")/start_models.sh"
 
 # 5. Pull default open-source models
-MODEL_NAME=${M4_MODEL:-"qwen2.5:7b-instruct"}
+if command -v nvidia-smi &> /dev/null && nvidia-smi &> /dev/null; then
+  echo "--> GPU detected! Using full Qwen2.5-7B"
+  DEFAULT_MODEL="qwen2.5:7b-instruct"
+else
+  echo "--> CPU mode detected! Using lightweight Qwen2.5-1.5B for fast execution"
+  DEFAULT_MODEL="qwen2.5:1.5b-instruct"
+fi
+
+MODEL_NAME=${M4_MODEL:-"$DEFAULT_MODEL"}
 EMBEDDER_NAME=${M4_EMBEDDER:-"all-minilm"}
 
 echo "--> Pulling chat model: $MODEL_NAME"
@@ -42,9 +50,9 @@ echo "--> Installing m4 and m4bench packages..."
 pip install --upgrade pip
 pip install -e packages/m4 -e packages/m4bench
 
-# 7. Hermetic smoke test
-echo "--> Running verification smoke test..."
-m4bench run locomo --stage smoke --embedder "$EMBEDDER_NAME"
+# 7. Verification smoke test
+echo "--> Running verification smoke test with model: $MODEL_NAME..."
+m4bench run locomo --stage smoke --embedder "$EMBEDDER_NAME" --model "$MODEL_NAME"
 
 echo "============================================="
 echo "  Bootstrap Complete! Ready for evaluation.  "
