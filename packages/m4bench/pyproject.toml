@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "m4bench"
+version = "1.0.0"
+description = "Benchmark harness for Meta-Memory (M4)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "m4",
+    "pydantic>=2.7.0",
+    "pyyaml>=6.0",
+    "click>=8.0.0",
+    "rich>=13.0.0",
+]
+
+[project.optional-dependencies]
+metrics = [
+    "bert-score>=0.3.13",
+    "mauve-text>=0.2.0",
+    "rouge-score>=0.1.2",
+    "nltk>=3.8.1",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[project.scripts]
+m4bench = "m4bench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
