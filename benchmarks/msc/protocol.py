@@ -63,6 +63,7 @@ def run_benchmark(
     store: Optional[MemoryStore] = None,
     compressor: Optional[Compressor] = None,
     data_path: Optional[str] = None,
+    mock: bool = False,
 ) -> AggregateResult:
     """
     Run the MSC benchmark evaluation per THEANINE protocol.
@@ -109,16 +110,22 @@ def run_benchmark(
         **ablation_flags,
     )
 
-    llm = llm_client or OpenAICompatLLM(
-        base_url=os.environ.get("M4_LLM_URL", "http://localhost:11434/v1"),
-        model=model,
-        temperature=temperature,
-    )
-    emb = embedder_client or OllamaEmbedder(
-        base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434/api/embeddings"),
-        model=embedder,
-    )
-    mem_store = store or InMemoryStore()
+    if mock:
+        from benchmarks.msc.tests.test_msc_protocol import FakeMSCLLM, FakeMSCEmbedder
+        llm = llm_client or FakeMSCLLM()
+        emb = embedder_client or FakeMSCEmbedder()
+        mem_store = store or InMemoryStore()
+    else:
+        llm = llm_client or OpenAICompatLLM(
+            base_url=os.environ.get("M4_LLM_URL", "http://localhost:11434/v1"),
+            model=model,
+            temperature=temperature,
+        )
+        emb = embedder_client or OllamaEmbedder(
+            base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434/api/embeddings"),
+            model=embedder,
+        )
+        mem_store = store or InMemoryStore()
 
     mem = M4Memory(
         config=config,

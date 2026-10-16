@@ -30,6 +30,7 @@ def main():
 @click.option("--seed", type=int, default=42, help="Random seed for sampling.")
 @click.option("--results-dir", type=str, default="results", help="Directory where results will be stored.")
 @click.option("--ablate", type=str, multiple=True, help="Components to ablate (e.g. chain, calibrate, compress, self_reflection).")
+@click.option("--mock", is_flag=True, default=False, help="Run with deterministic fake models (offline hermetic execution).")
 def run_command(
     dataset: str,
     stage: str,
@@ -41,6 +42,7 @@ def run_command(
     seed: int,
     results_dir: str,
     ablate: tuple,
+    mock: bool,
 ):
     """Run an evaluation protocol for a specific dataset."""
     console.print(f"[bold cyan]Starting m4bench evaluation for dataset:[/bold cyan] {dataset} (stage: {stage})")
@@ -73,6 +75,7 @@ def run_command(
             seed=seed,
             results_dir=results_dir,
             ablations=list(ablate),
+            mock=mock,
         )
         console.print(f"[bold green]Run completed successfully.[/bold green] Total items evaluated: {agg.total_items}")
     except Exception as exc:

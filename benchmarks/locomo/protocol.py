@@ -34,6 +34,7 @@ def run_benchmark(
     store: Optional[MemoryStore] = None,
     compressor: Optional[Compressor] = None,
     data_path: Optional[str] = None,
+    mock: bool = False,
 ) -> AggregateResult:
     """
     Run the LoCoMo benchmark evaluation per paper protocol.
@@ -86,17 +87,23 @@ def run_benchmark(
         default_embedder=embedder,
     )
 
-    # Initialize ports / adapters if not passed (e.g. Injected fake for testing)
-    llm = llm_client or OpenAICompatLLM(
-        base_url=os.environ.get("M4_LLM_URL", "http://localhost:11434/v1"),
-        model=model,
-        temperature=temperature,
-    )
-    emb = embedder_client or OllamaEmbedder(
-        base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434/api/embeddings"),
-        model=embedder,
-    )
-    mem_store = store or InMemoryStore()
+    if mock:
+        from benchmarks.locomo.tests.test_locomo_protocol import FakeBenchmarkLLM, FakeBenchmarkEmbedder
+        llm = llm_client or FakeBenchmarkLLM()
+        emb = embedder_client or FakeBenchmarkEmbedder()
+        mem_store = store or InMemoryStore()
+    else:
+        # Initialize ports / adapters if not passed (e.g. Injected fake for testing)
+        llm = llm_client or OpenAICompatLLM(
+            base_url=os.environ.get("M4_LLM_URL", "http://localhost:11434/v1"),
+            model=model,
+            temperature=temperature,
+        )
+        emb = embedder_client or OllamaEmbedder(
+            base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434/api/embeddings"),
+            model=embedder,
+        )
+        mem_store = store or InMemoryStore()
 
     mem = M4Memory(
         config=config,
