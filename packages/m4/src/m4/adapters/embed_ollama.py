@@ -17,6 +17,7 @@ class OllamaEmbedder:
         self.model = model
         self.dim = dim
         self.timeout = timeout
+        self._client = httpx.Client(timeout=self.timeout)
 
     def embed(self, texts: List[str]) -> List[List[float]]:
         if not texts:
@@ -33,9 +34,8 @@ class OllamaEmbedder:
             "keep_alive": "24h",
         }
 
-        with httpx.Client(timeout=self.timeout) as client:
-            resp = client.post(url, json=payload)
-            resp.raise_for_status()
-            data = resp.json()
-            embeddings = data.get("embeddings", [])
-            return embeddings
+        resp = self._client.post(url, json=payload)
+        resp.raise_for_status()
+        data = resp.json()
+        embeddings = data.get("embeddings", [])
+        return embeddings

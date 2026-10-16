@@ -24,6 +24,7 @@ class OpenAICompatLLMClient:
         self.api_key = api_key
         self.timeout = float(os.environ.get("M4_LLM_TIMEOUT", 300.0)) if timeout is None else timeout
         self.temperature = temperature
+        self._client = httpx.Client(timeout=self.timeout)
 
     def chat(
         self,
@@ -46,11 +47,10 @@ class OpenAICompatLLMClient:
         if json_mode:
             payload["response_format"] = {"type": "json_object"}
 
-        with httpx.Client(timeout=self.timeout) as client:
-            resp = client.post(url, json=payload, headers=headers)
-            resp.raise_for_status()
-            data = resp.json()
-            return data["choices"][0]["message"]["content"]
+        resp = self._client.post(url, json=payload, headers=headers)
+        resp.raise_for_status()
+        data = resp.json()
+        return data["choices"][0]["message"]["content"]
 
 
 OpenAICompatLLM = OpenAICompatLLMClient
