@@ -1,0 +1,26 @@
+dataset: "locomo"
+description: "Long-Context Memory Benchmark (LoCoMo) - QA across multi-session conversations"
+paper_citation: "Liang et al., Meta-Memory for Large Language Models, IEEE TASLP 2026"
+
+models:
+  default_llm: "qwen2.5:7b-instruct"
+  default_embedder: "bge-small-en-v1.5"
+  llm_base_url: "http://localhost:11434/v1"
+  embedder_base_url: "http://localhost:11434/api/embeddings"
+
+parameters:
+  gamma: 0.5
+  temperature: 0.8
+  store_backend: "memory" # "memory" or "neo4j"
+  exclude_adversarial: true
+
+stages:
+  smoke:
+    max_conversations: 1
+    max_qa_per_conv: 2
+  pilot:
+    max_conversations: 1
+    max_qa_per_conv: 20
+  full:
+    max_conversations: 10
+    max_qa_per_conv: null # all 1,540 QA items

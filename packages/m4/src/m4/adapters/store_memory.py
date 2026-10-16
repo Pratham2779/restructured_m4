@@ -169,3 +169,7 @@ class InMemoryMemoryStore:
             del self._next_links[ns]
             del self._prev_links[ns]
             del self._node_categories[ns]
+
+
+InMemoryStore = InMemoryMemoryStore
+

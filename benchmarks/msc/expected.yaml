@@ -1,0 +1,43 @@
+# Expected Paper Metrics for MSC & Ablation Study (Liang et al., IEEE TASLP 2026, Table 4)
+# NOTE: Do NOT guess or hallucinate numbers. Fill in exact values from Table 4 in paper.
+dataset: "msc"
+model: "qwen2.5:7b-instruct"
+gamma: 0.5
+temperature: 0.8
+protocol: "THEANINE (50-episode sample)"
+
+metrics:
+  f1: "TODO: Paper Table 4 (Overall F1 score for M4 + Qwen2.5-7B on MSC 50-episode)"
+  bleu_1: "TODO: Paper Table 4 (BLEU-1)"
+  bleu_4: "TODO: Paper Table 4 (BLEU-4)"
+  rouge_1: "TODO: Paper Table 4 (ROUGE-1)"
+  rouge_2: "TODO: Paper Table 4 (ROUGE-2)"
+  rouge_l: "TODO: Paper Table 4 (ROUGE-L)"
+  accuracy: "TODO: Paper Table 4 (Accuracy)"
+
+ablations:
+  wo_chain:
+    description: "w/o Chain (Disable chronological memory chains)"
+    f1: "TODO: Table 4 w/o Chain F1"
+    rouge_l: "TODO: Table 4 w/o Chain ROUGE-L"
+    bleu_1: "TODO: Table 4 w/o Chain BLEU-1"
+  wo_calibrate:
+    description: "w/o Calibrate (Disable consistency calibration / update)"
+    f1: "TODO: Table 4 w/o Calibrate F1"
+    rouge_l: "TODO: Table 4 w/o Calibrate ROUGE-L"
+    bleu_1: "TODO: Table 4 w/o Calibrate BLEU-1"
+  wo_compress:
+    description: "w/o Compress (Disable LLMLingua dormant node compression)"
+    f1: "TODO: Table 4 w/o Compress F1"
+    rouge_l: "TODO: Table 4 w/o Compress ROUGE-L"
+    bleu_1: "TODO: Table 4 w/o Compress BLEU-1"
+  wo_self_reflection:
+    description: "w/o Self-reflection (Disable self-reflection traversal evaluation)"
+    f1: "TODO: Table 4 w/o Self-reflection F1"
+    rouge_l: "TODO: Table 4 w/o Self-reflection ROUGE-L"
+    bleu_1: "TODO: Table 4 w/o Self-reflection BLEU-1"
+  wo_demonstration:
+    description: "w/o Demonstration (Remove JSON format demonstration in prompts)"
+    f1: "TODO: Table 4 w/o Demonstration F1"
+    rouge_l: "TODO: Table 4 w/o Demonstration ROUGE-L"
+    bleu_1: "TODO: Table 4 w/o Demonstration BLEU-1"

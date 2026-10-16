@@ -9,6 +9,6 @@ description = "M4 long-term memory engine, benchmark harness, and evaluation wor
 requires-python = ">=3.10"
 
 [tool.pytest.ini_options]
-testpaths = ["packages/m4/tests"]
+testpaths = ["packages/m4/tests", "packages/m4bench/tests", "benchmarks"]
 python_files = ["test_*.py"]
-pythonpath = ["packages/m4/src"]
+pythonpath = ["packages/m4/src", "packages/m4bench/src", "."]

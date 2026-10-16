@@ -1,0 +1,23 @@
+dataset: "msc"
+description: "Multi-Session Chat (MSC) - Long-term multi-session conversational evaluation under THEANINE protocol"
+paper_citation: "Xu et al. 2022 (MSC); Liang et al. 2026 (Table 4 Ablations)"
+
+models:
+  default_llm: "qwen2.5:7b-instruct"
+  default_embedder: "bge-small-en-v1.5"
+  llm_base_url: "http://localhost:11434/v1"
+  embedder_base_url: "http://localhost:11434/api/embeddings"
+
+parameters:
+  gamma: 0.5
+  temperature: 0.8
+  store_backend: "memory" # "memory" or "neo4j"
+  sample_ids_file: "benchmarks/msc/sample_ids.json"
+
+stages:
+  smoke:
+    max_episodes: 2
+  pilot:
+    max_episodes: 5
+  full:
+    max_episodes: 50 # 50-episode fixed sample
