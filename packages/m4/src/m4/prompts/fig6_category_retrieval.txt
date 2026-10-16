@@ -1,0 +1,9 @@
+Given the current utterance/query: {Query/Utterance}
+Please analyze the utterance and determine which categories it is relevant to.
+Return a JSON array of objects, where each object represents a category that is relevant to the utterance.
+Example JSON Response:
+"""
+[{"Category": "{YOUR_CATEGORY}"},
+ {"Category": "{YOUR_CATEGORY}"}]
+"""
+Based on the utterance, please provide the JSON response with the relevant categories without any reasoning:

@@ -1,0 +1,13 @@
+Here is a conversation: {Conversation}
+Please analyze the conversation and identify distinct pieces of information to memorize.
+Focus exclusively on details specific to the speakers or the situation (e.g., personal preferences, plans, specific events, relationships) and avoid summarizing common knowledge you already possess. This enables you to autonomously identify what needs to be memorized.
+For each identified piece of memory, classify it into a distinct and natural memory category and provide a concise summary.
+Return a JSON array of objects, where each object represents a memory item.
+
+Example JSON Response:
+"""
+[{"Category": "{YOUR_CATEGORY}", "Summary": "{YOUR_SUMMARY}"},
+ {"Category": "{YOUR_CATEGORY}", "Summary": "{YOUR_SUMMARY}"}]
+"""
+
+Now, for the given conversation, provide the JSON response without any reasoning:

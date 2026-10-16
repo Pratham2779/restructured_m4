@@ -1,0 +1,5 @@
+The following are user's query/utterance and candidate memories:
+Query/Utterance: {Query/Utterance}
+Memories: {Memories}
+Please be very honest in your judgment as to whether you can generate the best response based on the known memories.
+If you can, please output 1 and conversely if you need more memories then output 0 without any reasoning:

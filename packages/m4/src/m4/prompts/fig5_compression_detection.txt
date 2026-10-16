@@ -1,0 +1,5 @@
+The following is an original text and its compressed text:
+Original_text: {Original_text}
+Compressed_text: {Compressed_text}
+Please be careful to understand the differences and make an honest judgment as to whether most of the key information in the original text can be restored from the compressed text.
+If you think you can decompress or restore it, then please output 1, otherwise output 0 without any reasoning:

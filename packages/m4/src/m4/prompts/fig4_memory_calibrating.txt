@@ -1,0 +1,4 @@
+The following are summaries given in conversational order:
+Previous_summary: {Previous_summary}
+New_summary: {New_summary}
+Please understand their differences carefully and focus on the changes or updates between contents, such as the change of the speaker's identity, the development of events, and the change of attitude (interest, etc.), etc., and merge them into a new summary without any reasoning.

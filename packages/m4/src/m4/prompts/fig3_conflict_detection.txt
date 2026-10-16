@@ -1,0 +1,5 @@
+The following are summaries given in conversational order:
+Previous_summary: {Previous_summary}
+New_summary: {New_summary}
+Please understand their differences carefully and judge whether there is a conflict or update between them, such as a change in the speaker's identity, the development of events, and a change in attitude (interest, etc.).
+If you think there is a conflict between them, then please output 1, otherwise output 0 without any reasoning:

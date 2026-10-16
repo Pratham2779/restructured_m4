@@ -1,0 +1,4 @@
+The following are user's query/utterance and related memories:
+Query/Utterance: {Query/Utterance}
+Memories: {Memories}
+Generate the most plausible answer based memories without any reasoning. Each line in the memory represents a timeline chain of topics. Please pay attention to the sequence, the evolution of these memories.
