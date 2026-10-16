@@ -35,6 +35,7 @@ def main():
 @click.option("--seed", type=int, default=42, help="Random seed for sampling.")
 @click.option("--results-dir", type=str, default="results", help="Directory where results will be stored.")
 @click.option("--ablate", type=str, multiple=True, help="Components to ablate (e.g. chain, calibrate, compress, self_reflection).")
+@click.option("--run-id", type=str, default=None, help="Existing run ID to resume.")
 @click.option("--mock", is_flag=True, default=False, help="Run with deterministic fake models (offline hermetic execution).")
 def run_command(
     dataset: str,
@@ -47,6 +48,7 @@ def run_command(
     seed: int,
     results_dir: str,
     ablate: tuple,
+    run_id: Optional[str],
     mock: bool,
 ):
     """Run an evaluation protocol for a specific dataset."""
@@ -70,18 +72,21 @@ def run_command(
         sys.exit(1)
 
     try:
-        agg = mod.run_benchmark(
-            stage=stage,
-            workers=workers,
-            gamma=gamma,
-            temperature=temperature,
-            model=model,
-            embedder=embedder,
-            seed=seed,
-            results_dir=results_dir,
-            ablations=list(ablate),
-            mock=mock,
-        )
+        kwargs = {
+            "stage": stage,
+            "workers": workers,
+            "gamma": gamma,
+            "temperature": temperature,
+            "model": model,
+            "embedder": embedder,
+            "seed": seed,
+            "results_dir": results_dir,
+            "ablations": list(ablate),
+            "mock": mock,
+        }
+        if run_id:
+            kwargs["run_id"] = run_id
+        agg = mod.run_benchmark(**kwargs)
         console.print(f"[bold green]Run completed successfully.[/bold green] Total items evaluated: {agg.total_items}")
     except Exception as exc:
         console.print(f"[bold red]Evaluation failed:[/bold red] {exc}")

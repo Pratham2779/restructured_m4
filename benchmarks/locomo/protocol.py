@@ -29,6 +29,7 @@ def run_benchmark(
     seed: int = 42,
     results_dir: str = "results",
     ablations: Optional[List[str]] = None,
+    run_id: Optional[str] = None,
     llm_client: Optional[LLMClient] = None,
     embedder_client: Optional[Embedder] = None,
     store: Optional[MemoryStore] = None,
@@ -69,6 +70,7 @@ def run_benchmark(
     runner = BenchmarkRunner(
         dataset_name="locomo",
         stage=stage,
+        run_id=run_id,
         results_base_dir=results_dir,
         model_name=model,
         embedder_name=embedder,
