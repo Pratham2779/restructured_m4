@@ -15,11 +15,14 @@ class OpenAICompatLLMClient:
         model: str = "qwen2.5:7b-instruct",
         api_key: str = "dummy",
         timeout: float = 120.0,
+        temperature: float = 0.8,
+        **kwargs,
     ):
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.api_key = api_key
         self.timeout = timeout
+        self.temperature = temperature
 
     def chat(
         self,
@@ -35,7 +38,7 @@ class OpenAICompatLLMClient:
         payload = {
             "model": self.model,
             "messages": messages,
-            "temperature": 0.8 if temperature is None else temperature,
+            "temperature": self.temperature if temperature is None else temperature,
         }
         if max_tokens is not None:
             payload["max_tokens"] = max_tokens

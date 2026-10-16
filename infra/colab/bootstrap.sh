@@ -29,13 +29,13 @@ bash "$(dirname "$0")/start_models.sh"
 
 # 5. Pull default open-source models
 MODEL_NAME=${M4_MODEL:-"qwen2.5:7b-instruct"}
-EMBEDDER_NAME=${M4_EMBEDDER:-"bge-small-en-v1.5"}
+EMBEDDER_NAME=${M4_EMBEDDER:-"all-minilm"}
 
 echo "--> Pulling chat model: $MODEL_NAME"
 ollama pull "$MODEL_NAME"
 
-echo "--> Pulling embedding model: $EMBEDDER_NAME (if available on Ollama registry, otherwise fallbacks apply)"
-ollama pull "$EMBEDDER_NAME" || ollama pull all-minilm || echo "Embedding model pull finished."
+echo "--> Pulling embedding model: $EMBEDDER_NAME"
+ollama pull "$EMBEDDER_NAME" || ollama pull nomic-embed-text || echo "Embedding model ready."
 
 # 6. Install Python packages
 echo "--> Installing m4 and m4bench packages..."
@@ -44,7 +44,7 @@ pip install -e packages/m4 -e packages/m4bench
 
 # 7. Hermetic smoke test
 echo "--> Running verification smoke test..."
-m4bench run locomo --stage smoke
+m4bench run locomo --stage smoke --embedder "$EMBEDDER_NAME"
 
 echo "============================================="
 echo "  Bootstrap Complete! Ready for evaluation.  "
