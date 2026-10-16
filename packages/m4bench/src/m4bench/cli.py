@@ -9,6 +9,11 @@ import yaml
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 console = Console()
 

@@ -103,7 +103,18 @@ def run_benchmark(
             base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434"),
             model=embedder,
         )
-        mem_store = store or InMemoryStore()
+        if store is not None:
+            mem_store = store
+        elif os.environ.get("NEO4J_URI"):
+            from m4.adapters.store_neo4j import Neo4jMemoryStore
+            mem_store = Neo4jMemoryStore(
+                uri=os.environ["NEO4J_URI"],
+                user=os.environ.get("NEO4J_USER", "neo4j"),
+                password=os.environ.get("NEO4J_PASSWORD", "password"),
+            )
+            print(f"[Store] Using Neo4j Graph DB: {os.environ['NEO4J_URI']}", flush=True)
+        else:
+            mem_store = InMemoryStore()
 
     mem = M4Memory(
         config=config,
