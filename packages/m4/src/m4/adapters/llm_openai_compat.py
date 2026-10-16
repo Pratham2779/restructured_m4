@@ -49,9 +49,8 @@ class OpenAICompatLLMClient:
                 "model": self.model,
                 "messages": messages,
                 "temperature": self.temperature if temperature is None else temperature,
+                "max_tokens": max_tokens if max_tokens is not None else 2048,
             }
-            if max_tokens is not None:
-                payload["max_tokens"] = max_tokens
             if use_json:
                 payload["response_format"] = {"type": "json_object"}
 
