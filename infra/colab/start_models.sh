@@ -8,7 +8,7 @@ pkill -f "ollama serve" || true
 export LD_LIBRARY_PATH="/usr/local/nvidia/lib64:${LD_LIBRARY_PATH:-}"
 export PATH="/usr/local/cuda/bin:/opt/bin:${PATH:-}"
 export CUDA_VISIBLE_DEVICES="0,1"
-export OLLAMA_NUM_PARALLEL="${OLLAMA_NUM_PARALLEL:-6}"
+export OLLAMA_NUM_PARALLEL="${OLLAMA_NUM_PARALLEL:-11}"
 export OLLAMA_MAX_LOADED_MODELS="${OLLAMA_MAX_LOADED_MODELS:-2}"
 export OLLAMA_KEEP_ALIVE="24h"
 

@@ -101,10 +101,19 @@ def run_benchmark(
             model=model,
             temperature=temperature,
         )
-        emb = embedder_client or OllamaEmbedder(
-            base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434"),
-            model=embedder,
-        )
+        if embedder_client:
+            emb = embedder_client
+        elif embedder in ("3072", "mxbai-3072", "SeanLee97/mxbai-embed-large-v1-nli-matryoshka") or "/" in embedder or os.environ.get("M4_EMBED_BACKEND") == "sentence_transformers":
+            from m4.adapters.embed_sentence_transformers import SentenceTransformersEmbedder
+            model_name = "SeanLee97/mxbai-embed-large-v1-nli-matryoshka" if embedder in ("3072", "mxbai-3072") else embedder
+            emb = SentenceTransformersEmbedder(model_name=model_name)
+            print(f"[Embedder] Using SentenceTransformers adapter: {model_name} (dim: {emb.dim}, device: {emb.device})", flush=True)
+        else:
+            emb = OllamaEmbedder(
+                base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434"),
+                model=embedder,
+            )
+            print(f"[Embedder] Using Ollama adapter: {embedder}", flush=True)
         if store is not None:
             mem_store = store
         elif os.environ.get("NEO4J_URI"):
