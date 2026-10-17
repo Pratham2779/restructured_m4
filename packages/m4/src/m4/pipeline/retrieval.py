@@ -105,6 +105,16 @@ class SelfReflectionRetrievalPipeline:
 
         try:
             parsed = parse_json_tolerant(raw)
+            if isinstance(parsed, dict):
+                for k in ["categories", "Category", "category", "items"]:
+                    if k in parsed and isinstance(parsed[k], list):
+                        parsed = parsed[k]
+                        break
+                if isinstance(parsed, dict):
+                    for v in parsed.values():
+                        if isinstance(v, list):
+                            parsed = v
+                            break
             if isinstance(parsed, list):
                 cats = []
                 for item in parsed:

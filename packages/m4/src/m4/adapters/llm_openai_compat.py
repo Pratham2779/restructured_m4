@@ -50,6 +50,7 @@ class OpenAICompatLLMClient:
                 "messages": messages,
                 "temperature": self.temperature if temperature is None else temperature,
                 "max_tokens": max_tokens if max_tokens is not None else 2048,
+                "options": {"num_ctx": int(os.environ.get("M4_NUM_CTX", 4096))},
             }
             if use_json:
                 payload["response_format"] = {"type": "json_object"}

@@ -79,9 +79,18 @@ class CategoryLearningPipeline:
                 if isinstance(parsed, list):
                     parsed_items = parsed
                     break
-                elif isinstance(parsed, dict) and "memories" in parsed:
-                    parsed_items = parsed["memories"]
-                    break
+                elif isinstance(parsed, dict):
+                    for k in ["memories", "memory_items", "items", "clues"]:
+                        if k in parsed and isinstance(parsed[k], list):
+                            parsed_items = parsed[k]
+                            break
+                    if parsed_items is None:
+                        for v in parsed.values():
+                            if isinstance(v, list) and v and isinstance(v[0], dict):
+                                parsed_items = v
+                                break
+                    if parsed_items is not None:
+                        break
             except Exception as err:
                 if self.observer:
                     self.observer.on_event("json_parse_error", {"attempt": attempt, "error": str(err), "raw": raw_output[:200]})
