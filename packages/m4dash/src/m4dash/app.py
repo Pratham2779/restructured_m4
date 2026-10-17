@@ -1,7 +1,6 @@
 """M4 Results Dashboard: Streamlit Application (Pure Read-Only Consumer)."""
 import os
 import streamlit as st
-import pandas as pd
 from m4dash.utils import discover_runs, load_run_data, load_item_trace, create_run_zip
 
 st.set_page_config(
@@ -121,7 +120,7 @@ def main():
             })
 
         if rows:
-            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+            st.table(rows)
         else:
             st.info("No aggregate metrics available yet for this run.")
 
@@ -136,7 +135,7 @@ def main():
                     if k != "count":
                         entry[k] = v
                 cat_rows.append(entry)
-            st.dataframe(pd.DataFrame(cat_rows), use_container_width=True, hide_index=True)
+            st.table(cat_rows)
 
     # --- TAB 2: Item Inspector ---
     with tab_items:

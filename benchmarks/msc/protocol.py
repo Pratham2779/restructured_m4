@@ -121,10 +121,19 @@ def run_benchmark(
             model=model,
             temperature=temperature,
         )
-        emb = embedder_client or OllamaEmbedder(
-            base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434"),
-            model=embedder,
-        )
+        if embedder_client:
+            emb = embedder_client
+        elif embedder in ("3072", "mxbai-3072", "SeanLee97/mxbai-embed-large-v1-nli-matryoshka") or "/" in embedder or os.environ.get("M4_EMBED_BACKEND") == "sentence_transformers":
+            from m4.adapters.embed_sentence_transformers import SentenceTransformersEmbedder
+            model_name = "SeanLee97/mxbai-embed-large-v1-nli-matryoshka" if embedder in ("3072", "mxbai-3072") else embedder
+            emb = SentenceTransformersEmbedder(model_name=model_name)
+            print(f"[Embedder] Using SentenceTransformers adapter: {model_name} (dim: {emb.dim}, device: {emb.device})", flush=True)
+        else:
+            emb = OllamaEmbedder(
+                base_url=os.environ.get("M4_EMBED_URL", "http://localhost:11434"),
+                model=embedder,
+            )
+            print(f"[Embedder] Using Ollama adapter: {embedder}", flush=True)
         if store is not None:
             mem_store = store
         elif os.environ.get("NEO4J_URI"):
@@ -148,10 +157,12 @@ def run_benchmark(
     )
 
     # Evaluate each episode
-    for ep in episodes:
+    pending_episodes = [ep for ep in episodes if not runner.is_item_completed(f"msc_{ep.episode_id}")]
+
+    def process_episode(ep: MSCEpisode) -> None:
         item_id = f"msc_{ep.episode_id}"
         if runner.is_item_completed(item_id):
-            continue
+            return
 
         ns = item_id
         mem.reset(ns)
@@ -160,7 +171,6 @@ def run_benchmark(
         total_sess = len(ep.ingestion_sessions)
         print(f"\n[Episode: {item_id}] Ingesting {total_sess} past sessions...", flush=True)
         for s_idx, session in enumerate(ep.ingestion_sessions, 1):
-            print(f"  -> Ingesting session {s_idx}/{total_sess}...", flush=True)
             mem.ingest_session(ns, session)
 
         # 2. Maintain memory if compression is enabled and sessions exist
@@ -200,5 +210,13 @@ def run_benchmark(
             latency_seconds=round(latency, 3),
         )
         runner.record_item(item_res, trace_detail=resp.retrieval.trace)
+
+    if workers > 1 and pending_episodes:
+        import concurrent.futures
+        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+            list(executor.map(process_episode, pending_episodes))
+    else:
+        for ep in pending_episodes:
+            process_episode(ep)
 
     return runner.finalize()

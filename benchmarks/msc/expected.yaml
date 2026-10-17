@@ -1,5 +1,4 @@
-# Expected Paper Metrics for MSC & Ablation Study (Liang et al., IEEE TASLP 2026, Table 4)
-# NOTE: Do NOT guess or hallucinate numbers. Fill in exact values from Table 4 in paper.
+# Expected Paper Metrics for MSC & Ablation Study (Liang et al., IEEE TASLP 2026, Table 1 & Table 2)
 dataset: "msc"
 model: "qwen2.5:7b-instruct"
 gamma: 0.5
@@ -7,37 +6,50 @@ temperature: 0.8
 protocol: "THEANINE (50-episode sample)"
 
 metrics:
-  f1: "TODO: Paper Table 4 (Overall F1 score for M4 + Qwen2.5-7B on MSC 50-episode)"
-  bleu_1: "TODO: Paper Table 4 (BLEU-1)"
-  bleu_4: "TODO: Paper Table 4 (BLEU-4)"
-  rouge_1: "TODO: Paper Table 4 (ROUGE-1)"
-  rouge_2: "TODO: Paper Table 4 (ROUGE-2)"
-  rouge_l: "TODO: Paper Table 4 (ROUGE-L)"
-  accuracy: "TODO: Paper Table 4 (Accuracy)"
+  f1: null
+  bleu_1: null
+  bleu_4: 1.26  # Paper Table 1: Qwen2.5-7B-Instruct on MSC
+  rouge_1: null
+  rouge_2: null
+  rouge_l: 14.15 # Paper Table 1: Qwen2.5-7B-Instruct on MSC
+  mauve: 64.88   # Paper Table 1: Qwen2.5-7B-Instruct on MSC
+  bertscore: 48.29 # Paper Table 1: Qwen2.5-7B-Instruct on MSC
+  accuracy: null
 
+# Ablation study on ChatGPT (Paper Table 2, MSC section)
 ablations:
+  full_m4:
+    bleu_4: 1.36
+    rouge_l: 15.36
+    mauve: 65.13
+    bertscore: 48.37
   wo_chain:
     description: "w/o Chain (Disable chronological memory chains)"
-    f1: "TODO: Table 4 w/o Chain F1"
-    rouge_l: "TODO: Table 4 w/o Chain ROUGE-L"
-    bleu_1: "TODO: Table 4 w/o Chain BLEU-1"
+    bleu_4: 1.24
+    rouge_l: 14.88
+    mauve: 62.41
+    bertscore: 48.07
   wo_calibrate:
     description: "w/o Calibrate (Disable consistency calibration / update)"
-    f1: "TODO: Table 4 w/o Calibrate F1"
-    rouge_l: "TODO: Table 4 w/o Calibrate ROUGE-L"
-    bleu_1: "TODO: Table 4 w/o Calibrate BLEU-1"
+    bleu_4: 1.27
+    rouge_l: 15.00
+    mauve: 63.35
+    bertscore: 48.11
   wo_compress:
     description: "w/o Compress (Disable LLMLingua dormant node compression)"
-    f1: "TODO: Table 4 w/o Compress F1"
-    rouge_l: "TODO: Table 4 w/o Compress ROUGE-L"
-    bleu_1: "TODO: Table 4 w/o Compress BLEU-1"
+    bleu_4: 1.26
+    rouge_l: 14.97
+    mauve: 64.21
+    bertscore: 48.10
   wo_self_reflection:
     description: "w/o Self-reflection (Disable self-reflection traversal evaluation)"
-    f1: "TODO: Table 4 w/o Self-reflection F1"
-    rouge_l: "TODO: Table 4 w/o Self-reflection ROUGE-L"
-    bleu_1: "TODO: Table 4 w/o Self-reflection BLEU-1"
+    bleu_4: 1.31
+    rouge_l: 15.21
+    mauve: 64.73
+    bertscore: 48.14
   wo_demonstration:
     description: "w/o Demonstration (Remove JSON format demonstration in prompts)"
-    f1: "TODO: Table 4 w/o Demonstration F1"
-    rouge_l: "TODO: Table 4 w/o Demonstration ROUGE-L"
-    bleu_1: "TODO: Table 4 w/o Demonstration BLEU-1"
+    bleu_4: 1.22
+    rouge_l: 14.87
+    mauve: 62.38
+    bertscore: 48.07
