@@ -1,4 +1,5 @@
 """OpenAI-compatible LLM client adapter (works with Ollama, vLLM, llama.cpp)."""
+import os
 from typing import List, Dict, Optional
 import httpx
 
