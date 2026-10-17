@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
 set -e
 
-echo "=== Starting Ollama Service in Background ==="
+echo "=== Starting Ollama Service with Max GPU Parallelism ==="
 pkill -f "ollama serve" || true
+
+# Maximize Ollama GPU resource usage
+export LD_LIBRARY_PATH="/usr/local/nvidia/lib64:${LD_LIBRARY_PATH:-}"
+export PATH="/usr/local/cuda/bin:/opt/bin:${PATH:-}"
+export CUDA_VISIBLE_DEVICES="0,1"
+export OLLAMA_NUM_PARALLEL="${OLLAMA_NUM_PARALLEL:-6}"
+export OLLAMA_MAX_LOADED_MODELS="${OLLAMA_MAX_LOADED_MODELS:-2}"
+export OLLAMA_KEEP_ALIVE="24h"
+
 nohup ollama serve > /tmp/ollama.log 2>&1 &
 PID=$!
 echo "Ollama process launched with PID: $PID. Logs at /tmp/ollama.log"

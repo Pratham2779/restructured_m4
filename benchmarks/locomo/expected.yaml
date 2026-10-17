@@ -6,31 +6,27 @@ gamma: 0.5
 temperature: 0.8
 
 metrics:
-  f1: "TODO: Paper Table 2 (Overall F1 score for M4 + Qwen2.5-7B on LoCoMo)"
-  bleu_1: "TODO: Paper Table 2 (Overall BLEU-1)"
-  bleu_4: "TODO: Paper Table 2 (Overall BLEU-4)"
-  rouge_1: "TODO: Paper Table 2 (Overall ROUGE-1)"
-  rouge_2: "TODO: Paper Table 2 (Overall ROUGE-2)"
-  rouge_l: "TODO: Paper Table 2 (Overall ROUGE-L)"
-  accuracy: "TODO: Paper Table 2 (Overall Accuracy)"
+  f1: 23.35
+  bleu_1: 19.04
+  bleu_4: null
+  rouge_1: null
+  rouge_2: null
+  rouge_l: null
+  accuracy: null
 
 categories:
   single_hop:
-    f1: "TODO: Category 1 (Single-Hop) F1"
-    rouge_l: "TODO: Category 1 ROUGE-L"
-    bleu_1: "TODO: Category 1 BLEU-1"
+    f1: 25.61
+    bleu_1: 22.03
   temporal:
-    f1: "TODO: Category 2 (Temporal) F1"
-    rouge_l: "TODO: Category 2 ROUGE-L"
-    bleu_1: "TODO: Category 2 BLEU-1"
+    f1: 26.02
+    bleu_1: 21.84
   multi_hop:
-    f1: "TODO: Category 3 (Multi-Hop) F1"
-    rouge_l: "TODO: Category 3 ROUGE-L"
-    bleu_1: "TODO: Category 3 BLEU-1"
+    f1: 25.05
+    bleu_1: 19.83
   open_domain:
-    f1: "TODO: Category 4 (Open-Domain) F1"
-    rouge_l: "TODO: Category 4 ROUGE-L"
-    bleu_1: "TODO: Category 4 BLEU-1"
+    f1: 16.70
+    bleu_1: 12.44
 
 notes:
   - "Category 5 (Adversarial) is excluded following the paper protocol (leaving exactly 1,540 QA pairs)."

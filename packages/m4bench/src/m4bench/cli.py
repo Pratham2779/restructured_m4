@@ -27,7 +27,7 @@ def main():
 @main.command(name="run")
 @click.argument("dataset")
 @click.option("--stage", type=click.Choice(["smoke", "pilot", "full"]), default="smoke", help="Execution stage: smoke (1-2 items), pilot (subsample), or full.")
-@click.option("--workers", type=int, default=1, help="Number of worker threads (default 1).")
+@click.option("--workers", type=int, default=int(os.environ.get("M4_WORKERS", 6)), help="Number of worker threads (default 6 or M4_WORKERS).")
 @click.option("--gamma", type=float, default=0.5, help="Cosine similarity threshold gamma (default 0.5).")
 @click.option("--temperature", type=float, default=0.8, help="Generation temperature (default 0.8).")
 @click.option("--model", type=str, default="qwen2.5:7b-instruct", help="LLM model identifier.")

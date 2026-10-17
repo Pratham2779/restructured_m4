@@ -21,7 +21,7 @@ from benchmarks.locomo.loader import load_locomo_dataset, LoCoMoConversation, Lo
 
 def run_benchmark(
     stage: str = "smoke",
-    workers: int = 1,
+    workers: int = 6,
     gamma: float = 0.5,
     temperature: float = 0.8,
     model: str = "qwen2.5:7b-instruct",
