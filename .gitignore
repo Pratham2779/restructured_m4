@@ -222,3 +222,6 @@ __marimo__/
 # Benchmarks results
 results/
 
+# Large raw benchmark files (>100MB rejected by GitHub)
+benchmarks/cc/data/test.jsonl
+
