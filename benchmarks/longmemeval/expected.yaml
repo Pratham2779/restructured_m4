@@ -1,0 +1,15 @@
+# Expected Paper Metrics for LongMemEval (Liang et al., IEEE TASLP 2026, Table 4)
+dataset: "longmemeval"
+model: "qwen2.5:7b-instruct"
+gamma: 0.5
+temperature: 0.8
+protocol: "LongMemEval (Wu et al. 2025; Liang et al. Table 4)"
+
+# Table 4 published accuracies for M4 + Qwen2.5-7B-Instruct
+categories:
+  multi-session:
+    accuracy: 53.89  # MR: Multi-Session Reasoning
+  knowledge-update:
+    accuracy: 64.10  # KU: Knowledge Update
+  temporal-reasoning:
+    accuracy: 51.88  # TR: Temporal Reasoning

@@ -1,0 +1,22 @@
+dataset: "longmemeval"
+description: "LongMemEval - Benchmarking chat assistants on long-term interactive memory (Wu et al. 2025; Liang et al. 2026 Table 4)"
+paper_citation: "Wu et al. 2025 (LongMemEval); Liang et al. 2026 (Table 4 Task Robustness)"
+
+models:
+  default_llm: "qwen2.5:7b-instruct"
+  default_embedder: "3072"
+  llm_base_url: "http://localhost:11434/v1"
+  embedder_base_url: "http://localhost:11434/api/embeddings"
+
+parameters:
+  gamma: 0.5
+  temperature: 0.8
+  store_backend: "memory" # "memory" or "neo4j"
+
+stages:
+  smoke:
+    max_items: 2
+  pilot:
+    max_items: 20
+  full:
+    max_items: 500
